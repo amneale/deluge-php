@@ -1,0 +1,6 @@
+vendor/
+build/
+.idea/
+.DS_Store
+._.DS_Store
+
