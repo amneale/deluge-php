@@ -15,6 +15,11 @@ class ClientStub implements ClientInterface
     private $response;
 
     /**
+     * @var array
+     */
+    private $requestOptions;
+
+    /**
      * @inheritdoc
      */
     public function send(RequestInterface $request, array $options = [])
@@ -35,6 +40,15 @@ class ClientStub implements ClientInterface
      */
     public function request($method, $uri, array $options = [])
     {
+        return $this->requestAsync($method, $uri, $options);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function requestAsync($method, $uri, array $options = [])
+    {
+        $this->requestOptions = $options;
         $delugeMethod = $options['json']['method'];
 
         if (!isset($this->response[$delugeMethod])) {
@@ -55,14 +69,6 @@ class ClientStub implements ClientInterface
     /**
      * @inheritdoc
      */
-    public function requestAsync($method, $uri, array $options = [])
-    {
-        throw new MethodNotImplementedException();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getConfig($option = null)
     {
         throw new MethodNotImplementedException();
@@ -75,5 +81,10 @@ class ClientStub implements ClientInterface
     public function setResponse($delugeMethod, ResponseInterface $response)
     {
         $this->response[$delugeMethod] = $response;
+    }
+
+    public function getRequestOptions()
+    {
+        return $this->requestOptions;
     }
 }

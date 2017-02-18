@@ -87,11 +87,12 @@ class DelugeClient
 
     /**
      * @param string $magnetUri
+     * @param string|null $downloadPath
      *
      * @throws AddTorrentException
      * @throws InvalidHashException
      */
-    public function addTorrentByMagnetUri($magnetUri)
+    public function addTorrentByMagnetUri($magnetUri, $downloadPath = null)
     {
         if (!$this->isAuthenticated()) {
             $this->authenticate();
@@ -103,7 +104,7 @@ class DelugeClient
             [
                 'json' => [
                     'method' => static::METHOD_ADD_MAGNET,
-                    'params' => [$magnetUri, []],
+                    'params' => [$magnetUri, array_filter(['download_location' => $downloadPath])],
                     'id' => uniqid(),
                 ],
                 'cookies' => $this->cookieJar,

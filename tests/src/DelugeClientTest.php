@@ -11,6 +11,7 @@ class DelugeClientTest extends \PHPUnit_Framework_TestCase
     const TORRENT_INFO_HASH = 'AAAABBBBCCCCDDDD1234';
     const SERVER_URI = 'http://torrent.client.uri';
     const SERVER_PASSWORD = 'password';
+    const DOWNLOAD_PATH = '/download/path';
 
     /**
      * @var string
@@ -88,6 +89,31 @@ class DelugeClientTest extends \PHPUnit_Framework_TestCase
         $this->setAddTorrentResponse('foobar');
 
         $this->client->addTorrentByMagnetUri($this->magnetUri);
+    }
+
+    /**
+     * @param string|null $downloadPath
+     * @param array $clientParams
+     *
+     * @dataProvider downloadPathProvider
+     */
+    public function testAddTorrentDownloadPath($downloadPath, $clientParams)
+    {
+        $this->authenticateSuccessfully();
+        $this->setAddTorrentResponse(static::TORRENT_INFO_HASH);
+
+        $this->client->addTorrentByMagnetUri($this->magnetUri, $downloadPath);
+
+        $params = $this->guzzleClient->getRequestOptions();
+        $this->assertEquals($clientParams, $params['json']['params'][1]);
+    }
+
+    public function downloadPathProvider()
+    {
+        return [
+            [null, []],
+            [static::DOWNLOAD_PATH, ['download_location' => static::DOWNLOAD_PATH]],
+        ];
     }
 
     private function authenticateSuccessfully()
